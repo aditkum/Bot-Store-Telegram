@@ -65,7 +65,7 @@ async def start(update: Update, context: CallbackContext):
         f"👋 Selamat datang di *Store Ekha*!\n\n"
         f"🧑 Nama: {user.full_name}\n"
         f"🆔 ID: {user.id}\n"
-        f"💰 Saldo: Rp{s:,}\n"
+        f"💰 Total Saldo Kamu: Rp{s:,}\n"
         f"📦 Total Transaksi: {jumlah}\n"
         f"💸 Total Nominal Transaksi: Rp{total:,}"
     )
@@ -112,7 +112,7 @@ async def button_callback(update: Update, context: CallbackContext):
         await query.message.delete()
         await context.bot.send_message(
             chat_id=query.from_user.id,
-            text=msg + "\nSilakan pilih ID produk untuk membeli.",
+            text=msg + "\nSilahkan pilih Nomor produk yang ingin dibeli.",
             reply_markup=reply_keyboard,
             parse_mode="Markdown"
         )
@@ -162,7 +162,7 @@ async def button_callback(update: Update, context: CallbackContext):
         else:
             nominal = int(data.split("_")[1])
             context.user_data["nominal_asli"] = nominal
-            context.user_data["total_transfer"] = nominal + 213
+            context.user_data["total_transfer"] = nominal + 23
 
             reply_keyboard = ReplyKeyboardMarkup(
                 [[KeyboardButton("❌ Batalkan Deposit")]],
@@ -171,7 +171,7 @@ async def button_callback(update: Update, context: CallbackContext):
             await query.message.delete()
             await context.bot.send_message(
                 chat_id=query.from_user.id,
-                text=f"💳 Transfer *Rp{nominal + 213:,}* ke:\n"
+                text=f"💳 Transfer *Rp{nominal + 23:,}* ke:\n"
                      "`DANA 0812-XXXX-XXXX a.n. Store Ekha`\nSetelah transfer, kirim bukti ke bot ini.",
                 parse_mode="Markdown",
                 reply_markup=reply_keyboard
@@ -215,6 +215,7 @@ async def button_callback(update: Update, context: CallbackContext):
                 text=f"✅ Saldo Rp{nominal:,} berhasil ditambahkan!",
                 reply_markup=ReplyKeyboardRemove()
             )
+            await start(update, context)
         else:
             await query.edit_message_caption("❌ Data deposit tidak ditemukan.")
 
@@ -231,19 +232,42 @@ async def button_callback(update: Update, context: CallbackContext):
         await query.edit_message_caption("✅ Dibatalkan.")
 
     elif data in produk:
-        harga = produk[data]["harga"]
-        if saldo.get(uid, 0) >= harga and produk[data]["stok"] > 0:
+        item = produk[data]
+        harga = item["harga"]
+
+        if saldo.get(uid, 0) >= harga and item["stok"] > 0 and item.get("akun_list"):
+            akun = item["akun_list"].pop(0)  # Ambil satu akun pertama
             saldo[uid] -= harga
-            produk[data]["stok"] -= 1
+            item["stok"] -= 1
             save_json(saldo_file, saldo)
             save_json(produk_file, produk)
-            add_riwayat(uid, "BELI", produk[data]["nama"], harga)
+            add_riwayat(uid, "BELI", item["nama"], harga)
+
+            # Siapkan file txt
+            os.makedirs("akun", exist_ok=True)
+            file_path = f"akun/{uid}_{data}.txt"
+            with open(file_path, "w") as f:
+                f.write(
+                    f"Akun: {akun.get('username')}\n"
+                    f"Password: {akun.get('password')}\n"
+                    f"Jenis: {akun.get('tipe', '-')}"
+                )
+
+            # Kirim pesan sukses + file akun
             await query.edit_message_text(
-                f"✅ Pembelian *{produk[data]['nama']}* berhasil!\nSisa saldo: Rp{saldo[uid]:,}",
+                f"✅ Pembelian *{item['nama']}* berhasil!\nSisa saldo: Rp{saldo[uid]:,}",
                 parse_mode="Markdown"
             )
-        else:
-            await query.edit_message_text("❌ Saldo tidak cukup atau stok habis.")
+            await context.bot.send_document(
+                chat_id=query.from_user.id,
+                document=InputFile(file_path),
+                caption="📄 Berikut detail akun kamu."
+            )
+            os.remove(file_path)  # hapus file setelah dikirim (opsional)
+
+    else:
+        await query.edit_message_text("❌ Saldo tidak cukup, stok habis, atau akun tidak tersedia.")
+
 
 async def handle_text(update: Update, context: CallbackContext):
     text = update.message.text.strip()
@@ -269,13 +293,13 @@ async def handle_text(update: Update, context: CallbackContext):
             nominal = int(text)
             context.user_data["awaiting_custom"] = False
             context.user_data["nominal_asli"] = nominal
-            context.user_data["total_transfer"] = nominal + 213
+            context.user_data["total_transfer"] = nominal + 23
             reply_keyboard = ReplyKeyboardMarkup(
                 [[KeyboardButton("❌ Batalkan Deposit")]],
                 resize_keyboard=True, one_time_keyboard=True
             )
             await update.message.reply_text(
-                f"💳 Transfer *Rp{nominal + 213:,}* ke:\n"
+                f"💳 Transfer *Rp{nominal + 23:,}* ke:\n"
                 "`DANA 0812-XXXX-XXXX a.n. Store Ekha`\nSetelah transfer, kirim bukti ke bot ini.",
                 parse_mode="Markdown",
                 reply_markup=reply_keyboard
@@ -355,7 +379,7 @@ async def handle_photo(update: Update, context: CallbackContext):
     await update.message.reply_text("✅ Bukti dikirim! Tunggu konfirmasi admin.")
 
 def main():
-    app = Application.builder().token("7744417286:AAFsrALfVC9PONsA3HXxDMcBsj62IwykDqU").build()
+    app = Application.builder().token("CHANGE_TO_YOUR_BOT_TOKEN").build()
     app.add_handler(CommandHandler("start", start))
     app.add_handler(CallbackQueryHandler(button_callback))
     app.add_handler(MessageHandler(filters.TEXT & ~filters.COMMAND, handle_text))
