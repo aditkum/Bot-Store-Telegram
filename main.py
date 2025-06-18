@@ -1,5 +1,5 @@
-import json
-import os
+import json # Made With love by @govtrashit A.K.A RzkyO
+import os # DON'T CHANGE AUTHOR NAME!
 from telegram import (
     Update, InlineKeyboardButton, InlineKeyboardMarkup,
     InputFile, ReplyKeyboardMarkup, KeyboardButton, ReplyKeyboardRemove, CallbackQuery
@@ -74,6 +74,7 @@ async def start(update: Update, context: CallbackContext):
         [InlineKeyboardButton("📋 List Produk", callback_data="list_produk"),
          InlineKeyboardButton("🛒 Stock", callback_data="cek_stok")],
         [InlineKeyboardButton("💰 Deposit Saldo", callback_data="deposit")],
+        [InlineKeyboardButton("📖 Informasi Bot", callback_data="info_bot")],
     ]
     if user.id == OWNER_ID:
         keyboard.append([InlineKeyboardButton("🛠 Admin Panel", callback_data="admin_panel")])
@@ -148,6 +149,28 @@ async def button_callback(update: Update, context: CallbackContext):
             parse_mode="Markdown"
         )
 
+    elif data == "info_bot":
+        text = (
+            "📖 *INFORMASI BOT*\n"
+            "╭─────────────────────────────╮\n"
+            "├ 🧠 *Nama Bot*: `Store Ekha`\n"
+            "├ 👨‍💻 *Developer*: [@govtrashit](https://t.me/govtrashit)\n"
+            "├ 🛒 *Fungsi*: Untuk penjualan akun digital otomatis\n"
+            "├ ⚙️ *Fitur BOT*:\n"
+            "│   ├ Fitur Deposit\n"
+            "│   ├ Konfirmasi Deposit Manual\n"
+            "│   ├ Pengiriman Akun via File\n"
+            "│   └ Statistik & Riwayat\n"
+            "├ 🧰 *Teknologi*: `Python`, `Telegram Bot API`\n"
+            "├ 🗓️ *Update Terakhir*: 18 Juni 2025\n"
+            "╰─────────────────────────────╯\n\n"
+            "🌐 *Developer on Social Media:*\n"
+            "• Github: [@rzzky](https://github.com/rzzky)\n"
+            "• Instagram: [@rizzkyo](https://instagram.com/rizzkyo)\n\n"
+            "💬 *Saran, kritik, atau kerja sama?*\n"
+            "👉 Hubungi: [@govtrashit](https://t.me/govtrashit)"
+        )
+        await query.edit_message_text(text, parse_mode="Markdown", disable_web_page_preview=True)
 
     elif data == "deposit":
         nominals = [10000, 15000, 20000, 25000]
@@ -516,7 +539,7 @@ async def handle_photo(update: Update, context: CallbackContext):
         )
     await update.message.reply_text("✅ Bukti dikirim! Tunggu konfirmasi admin.")
 
-def main():
+def main(): # Made With love by @govtrashit A.K.A RzkyO
     app = Application.builder().token("CHANGE_TO_YOUR_BOT_TOKEN").build()
     app.add_handler(CommandHandler("start", start))
     app.add_handler(CallbackQueryHandler(button_callback))
