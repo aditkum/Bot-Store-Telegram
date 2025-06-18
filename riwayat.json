@@ -1,0 +1,22 @@
+{
+  "7510576714": [
+    {
+      "tipe": "DEPOSIT",
+      "keterangan": "Konfirmasi Admin",
+      "jumlah": 5000,
+      "waktu": "18/06/2025 13:02:28"
+    },
+    {
+      "tipe": "DEPOSIT",
+      "keterangan": "Konfirmasi Admin",
+      "jumlah": 10000,
+      "waktu": "18/06/2025 13:07:14"
+    },
+    {
+      "tipe": "BELI",
+      "keterangan": "YOUTUBE 1 BULAN FAMHEAD",
+      "jumlah": 25000,
+      "waktu": "18/06/2025 13:42:47"
+    }
+  ]
+}

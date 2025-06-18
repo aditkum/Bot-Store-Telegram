@@ -1,0 +1,27 @@
+{
+  "1": {
+    "nama": "YOUTUBE 1 BULAN FAMHEAD",
+    "stok": 1,
+    "harga": 25000
+  },
+  "2": {
+    "nama": "CANVA PRO 12 BULAN",
+    "stok": 0,
+    "harga": 55000
+  },
+  "3": {
+    "nama": "CANVA PRO LIFETIME",
+    "stok": 17,
+    "harga": 100000
+  },
+  "4": {
+    "nama": "EXPRESS VPN 30 HARI",
+    "stok": 6,
+    "harga": 30000
+  },
+  "5": {
+    "nama": "SPOTIFY PREMIUM 1B STUDENT GP",
+    "stok": 3,
+    "harga": 25000
+  }
+}
