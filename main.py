@@ -2,7 +2,7 @@ import json
 import os
 from telegram import (
     Update, InlineKeyboardButton, InlineKeyboardMarkup,
-    InputFile, ReplyKeyboardMarkup, KeyboardButton, ReplyKeyboardRemove
+    InputFile, ReplyKeyboardMarkup, KeyboardButton, ReplyKeyboardRemove, CallbackQuery
 )
 from telegram.ext import (
     Application, CommandHandler, MessageHandler,
@@ -232,41 +232,163 @@ async def button_callback(update: Update, context: CallbackContext):
         await query.edit_message_caption("✅ Dibatalkan.")
 
     elif data in produk:
+        # Saat user klik ID produk
         item = produk[data]
+        if item["stok"] <= 0:
+            await query.answer("Produk habis", show_alert=True)
+            return
+
         harga = item["harga"]
+        tipe = item["akun_list"][0]["tipe"] if item["akun_list"] else "-"
+        stok = item["stok"]
 
-        if saldo.get(uid, 0) >= harga and item["stok"] > 0 and item.get("akun_list"):
-            akun = item["akun_list"].pop(0)  # Ambil satu akun pertama
-            saldo[uid] -= harga
-            item["stok"] -= 1
-            save_json(saldo_file, saldo)
-            save_json(produk_file, produk)
-            add_riwayat(uid, "BELI", item["nama"], harga)
+        context.user_data["konfirmasi"] = {
+            "produk_id": data,
+            "jumlah": 1
+        }
 
-            # Siapkan file txt
-            os.makedirs("akun", exist_ok=True)
-            file_path = f"akun/{uid}_{data}.txt"
-            with open(file_path, "w") as f:
+        text = (
+            "KONFIRMASI PESANAN 🛒\n"
+            "╭ - - - - - - - - - - - - - - - - - - - - - ╮\n"
+            f"┊・Produk: {item['nama']}\n"
+            f"┊・Variasi: {tipe}\n"
+            f"┊・Harga satuan: Rp. {harga:,}\n"
+            f"┊・Stok tersedia: {stok}\n"
+            "┊ - - - - - - - - - - - - - - - - - - - - -\n"
+            f"┊・Jumlah Pesanan: x1\n"
+            f"┊・Total Pembayaran: Rp. {harga:,}\n"
+            "╰ - - - - - - - - - - - - - - - - - - - - - ╯"
+        )
+
+        keyboard = InlineKeyboardMarkup([
+            [
+                InlineKeyboardButton("➖", callback_data="qty_minus"),
+                InlineKeyboardButton("Jumlah: 1", callback_data="ignore"),
+                InlineKeyboardButton("➕", callback_data="qty_plus")
+            ],
+            [InlineKeyboardButton("Konfirmasi Order ✅", callback_data="confirm_order")],
+            [InlineKeyboardButton("🔙 Kembali", callback_data="back_to_produk")]
+        ])
+        await query.message.delete()
+        await context.bot.send_message(
+            chat_id=uid,
+            text=text,
+            reply_markup=keyboard
+        )
+
+    elif data == "qty_plus" or data == "qty_minus":
+        info = context.user_data.get("konfirmasi")
+        if not info:
+            await query.answer("Data tidak tersedia")
+            return
+
+        produk_id = info["produk_id"]
+        item = produk.get(produk_id)
+        if not item:
+            await query.answer("Produk tidak ditemukan")
+            return
+
+        jumlah = info["jumlah"]
+        if data == "qty_plus" and jumlah < item["stok"]:
+            jumlah += 1
+        elif data == "qty_minus" and jumlah > 1:
+            jumlah -= 1
+
+        context.user_data["konfirmasi"]["jumlah"] = jumlah
+        total = jumlah * item["harga"]
+        tipe = item["akun_list"][0]["tipe"] if item["akun_list"] else "-"
+
+        text = (
+            "KONFIRMASI PESANAN 🛒\n"
+            "╭ - - - - - - - - - - - - - - - - - - - - - ╮\n"
+            f"┊・Produk: {item['nama']}\n"
+            f"┊・Variasi: {tipe}\n"
+            f"┊・Harga satuan: Rp. {item['harga']:,}\n"
+            f"┊・Stok tersedia: {item['stok']}\n"
+            "┊ - - - - - - - - - - - - - - - - - - - - -\n"
+            f"┊・Jumlah Pesanan: x{jumlah}\n"
+            f"┊・Total Pembayaran: Rp. {total:,}\n"
+            "╰ - - - - - - - - - - - - - - - - - - - - - ╯"
+        )
+
+        keyboard = InlineKeyboardMarkup([
+            [
+                InlineKeyboardButton("➖", callback_data="qty_minus"),
+                InlineKeyboardButton(f"Jumlah: {jumlah}", callback_data="ignore"),
+                InlineKeyboardButton("➕", callback_data="qty_plus")
+            ],
+            [InlineKeyboardButton("Konfirmasi Order ✅", callback_data="confirm_order")],
+            [InlineKeyboardButton("🔙 Kembali", callback_data="back_to_produk")]
+        ])
+        await query.edit_message_text(text, reply_markup=keyboard)
+
+    elif data == "back_to_produk":
+        await start(update, context)
+
+    elif data == "confirm_order":
+        info = context.user_data.get("konfirmasi")
+        if not info:
+            await query.answer("❌ Data pesanan tidak ditemukan", show_alert=True)
+            return
+
+        produk_id = info["produk_id"]
+        jumlah = info["jumlah"]
+        uid = str(query.from_user.id)
+
+        produk = load_json(produk_file)
+        saldo = load_json(saldo_file)
+
+        item = produk.get(produk_id)
+        if not item:
+            await query.edit_message_text("❌ Produk tidak ditemukan.")
+            return
+
+        total = jumlah * item["harga"]
+
+        if saldo.get(uid, 0) < total:
+            await query.edit_message_text("❌ Saldo kamu tidak cukup untuk menyelesaikan pesanan.")
+            await start(update, context)
+            return
+
+        if item["stok"] < jumlah or len(item["akun_list"]) < jumlah:
+            await query.edit_message_text("❌ Stok atau akun tidak mencukupi.")
+            return
+
+        # Proses pemesanan
+        saldo[uid] -= total
+        produk[produk_id]["stok"] -= jumlah
+        akun_terpakai = [item["akun_list"].pop(0) for _ in range(jumlah)]
+
+        save_json(saldo_file, saldo)
+        save_json(produk_file, produk)
+        add_riwayat(uid, "BELI", f"{item['nama']} x{jumlah}", total)
+
+        # Buat file txt
+        os.makedirs("akun_dikirim", exist_ok=True)
+        file_path = f"akun_dikirim/{uid}_{produk_id}_x{jumlah}.txt"
+        with open(file_path, "w") as f:
+            for i, akun in enumerate(akun_terpakai, start=1):
                 f.write(
-                    f"Akun: {akun.get('username')}\n"
-                    f"Password: {akun.get('password')}\n"
-                    f"Jenis: {akun.get('tipe', '-')}"
+                    f"Akun #{i}\n"
+                    f"Username: {akun['username']}\n"
+                    f"Password: {akun['password']}\n"
+                    f"Tipe: {akun['tipe']}\n"
+                    "---------------------------\n"
                 )
 
-            # Kirim pesan sukses + file akun
-            await query.edit_message_text(
-                f"✅ Pembelian *{item['nama']}* berhasil!\nSisa saldo: Rp{saldo[uid]:,}",
-                parse_mode="Markdown"
-            )
+        with open(file_path, "rb") as f:
             await context.bot.send_document(
                 chat_id=query.from_user.id,
-                document=InputFile(file_path),
-                caption="📄 Berikut detail akun kamu."
+                document=InputFile(f, filename=os.path.basename(file_path)),
+                caption=f"📦 Pembelian *{item['nama']}* x{jumlah} berhasil!\nSisa saldo: Rp{saldo[uid]:,}",
+                parse_mode="Markdown"
             )
-            os.remove(file_path)  # hapus file setelah dikirim (opsional)
 
-    else:
-        await query.edit_message_text("❌ Saldo tidak cukup, stok habis, atau akun tidak tersedia.")
+        context.user_data.pop("konfirmasi", None)
+        await start(update, context)
+
+    elif data == "ignore":
+        await query.answer()
 
 
 async def handle_text(update: Update, context: CallbackContext):
@@ -274,7 +396,7 @@ async def handle_text(update: Update, context: CallbackContext):
 
     # Normalisasi input jika tombol mengandung "SOLDOUT"
     if "SOLDOUT" in text:
-        text = text.split()[0]  # Ambil ID produk saja, misal: "1 SOLDOUT ❌" -> "1"
+        text = text.split()[0]
 
     uid = str(update.effective_user.id)
 
@@ -308,39 +430,55 @@ async def handle_text(update: Update, context: CallbackContext):
             await update.message.reply_text("❌ Format salah.")
         return
 
-    # Tangani pembelian angka produk
+    # Tangani angka produk → Arahkan manual ke fungsi konfirmasi
     produk = load_json(produk_file)
     if text in produk:
         item = produk[text]
-        if item["stok"] == 0:
-            # Tampilkan pesan stok habis dengan tombol kembali
-            keyboard = ReplyKeyboardMarkup([[KeyboardButton("🔙 Kembali")]], resize_keyboard=True, one_time_keyboard=True)
-            await update.message.reply_text("❌ Produk ini tidak bisa dibeli karena stok sudah habis.", reply_markup=keyboard)
+        if item["stok"] <= 0:
+            await update.message.reply_text("❌ Produk ini tidak bisa dibeli karena stok habis.")
+            await start(update, context)
             return
 
-        saldo = load_json(saldo_file)
         harga = item["harga"]
+        tipe = item["akun_list"][0]["tipe"] if item["akun_list"] else "-"
+        stok = item["stok"]
 
-        if saldo.get(uid, 0) >= harga:
-            saldo[uid] -= harga
-            produk[text]["stok"] -= 1
-            save_json(saldo_file, saldo)
-            save_json(produk_file, produk)
-            add_riwayat(uid, "BELI", item["nama"], harga)
-            await update.message.reply_text(
-                f"✅ Pembelian *{item['nama']}* berhasil!\nSisa saldo: Rp{saldo[uid]:,}",
-                parse_mode="Markdown"
-            )
-        else:
-            await update.message.reply_text("❌ Saldo kamu tidak cukup untuk membeli produk ini.")
+        context.user_data["konfirmasi"] = {
+            "produk_id": text,
+            "jumlah": 1
+        }
+
+        konfirmasi_text = (
+            "KONFIRMASI PESANAN 🛒\n"
+            "╭ - - - - - - - - - - - - - - - - - - - - - ╮\n"
+            f"┊・Produk: {item['nama']}\n"
+            f"┊・Variasi: {tipe}\n"
+            f"┊・Harga satuan: Rp. {harga:,}\n"
+            f"┊・Stok tersedia: {stok}\n"
+            "┊ - - - - - - - - - - - - - - - - - - - - -\n"
+            f"┊・Jumlah Pesanan: x1\n"
+            f"┊・Total Pembayaran: Rp. {harga:,}\n"
+            "╰ - - - - - - - - - - - - - - - - - - - - - ╯"
+        )
+
+        keyboard = InlineKeyboardMarkup([
+            [
+                InlineKeyboardButton("➖", callback_data="qty_minus"),
+                InlineKeyboardButton("Jumlah: 1", callback_data="ignore"),
+                InlineKeyboardButton("➕", callback_data="qty_plus")
+            ],
+            [InlineKeyboardButton("Konfirmasi Order ✅", callback_data="confirm_order")],
+            [InlineKeyboardButton("🔙 Kembali", callback_data="back_to_produk")]
+        ])
+        await update.message.reply_text(konfirmasi_text, reply_markup=keyboard)
         return
 
-    # Tangani tombol kembali manual
+    # Tombol kembali
     if text == "🔙 Kembali":
         await start(update, context)
         return
 
-    # Default fallback ke menu awal
+    # Fallback ke menu utama
     await start(update, context)
 
 async def handle_photo(update: Update, context: CallbackContext):
