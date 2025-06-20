@@ -10,7 +10,7 @@ from telegram.ext import (
 )
 from datetime import datetime
 
-OWNER_ID = 1942140593
+OWNER_ID = 1749723307
 produk_file = "produk.json"
 saldo_file = "saldo.json"
 deposit_file = "pending_deposit.json"
@@ -61,7 +61,7 @@ async def send_main_menu(context, chat_id, user):
     total = statistik.get(str(user.id), {}).get("nominal", 0)
 
     text = (
-        f"👋 Selamat datang di *Store Ekha*!\n\n"
+        f"👋 Selamat datang di *VVIP TRUSTED*!\n\n"
         f"🧑 Nama: {user.full_name}\n"
         f"🆔 ID: {user.id}\n"
         f"💰 Total Saldo Kamu: Rp{s:,}\n"
