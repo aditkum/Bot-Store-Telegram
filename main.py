@@ -61,7 +61,7 @@ async def send_main_menu(context, chat_id, user):
     total = statistik.get(str(user.id), {}).get("nominal", 0)
 
     text = (
-        f"👋 Selamat datang di *VVIP TRUSTED*!\n\n"
+        f"👋 Selamat datang di *VVIP PREMIUM TRUSTED*!\n\n"
         f"🧑 Nama: {user.full_name}\n"
         f"🆔 ID: {user.id}\n"
         f"💰 Total Saldo Kamu: Rp{s:,}\n"
@@ -245,7 +245,7 @@ async def handle_deposit_nominal(update, context): # HANDLE DEPOSIT NOMINAL
             text=f"💳 Transfer *Rp{nominal + 23:,}* ke:\n"
                  "`DANA 0831-7721-1438 A.N Rak** Ha**`\n"
                  "`BCA 8130511458 A.N Rak** Ha**`\n"
-                 "`BANK JAGO 107616413403 A.N Rizky Oryza`\nSetelah transfer, kirim bukti ke bot ini.",
+                 "`BANK JAGO 100667938649 A.N Mar****`\nSetelah transfer, kirim bukti ke bot ini.",
             parse_mode="Markdown",
             reply_markup=reply_keyboard
         )
@@ -501,17 +501,17 @@ async def handle_info_bot(update, context):  # HANDLE INFO BOT
     text = (
         "📖 *INFORMASI BOT*\n"
         "╽─────────────────────────────╮\n"
-        "├ 🧠 *Nama Bot*: `Store Ekha`\n"
-        "├ 👨‍💻 *Author*: [@govtrashit](https://t.me/govtrashit)\n"
-        "├ 🛒 *Fungsi*: Penjualan akun digital otomatis\n"
+        "├ 🧠 *Nama Bot*: `BOT ORDER VVIP PREMIUM`\n"
+        "├ 👨‍💻 *Author*: [@uknowbite](https://t.me/uknowbite)\n"
+        "├ 🛒 *Fungsi*: Penjualan Vvip otomatis\n"
         "├ ⚙️ *Fitur*: Deposit, Pengiriman Akun, Statistik\n"
         "├ 🧰 *Teknologi*: Python, Telegram Bot API\n"
         "├ 🗓️ *Update*: 18 Juni 2025\n"
         "╰─────────────────────────────╯\n\n"
         "🌐 *Sosial Media Developer:*\n"
-        "• GitHub: [@rzzky](https://github.com/rzzky)\n"
-        "• Instagram: [@rizzkyo](https://instagram.com/rizzkyo)\n\n"
-        "💬 *Saran / kritik?* Hubungi [@govtrashit](https://t.me/govtrashit)"
+        "• GitHub: -\n"
+        "• Instagram: -\n\n"
+        "💬 *Saran / kritik?* Hubungi [@uknowbite](https://t.me/uknowbite)"
     )
 
     keyboard = InlineKeyboardMarkup([
@@ -597,7 +597,7 @@ async def handle_text(update: Update, context: CallbackContext):
             )
             await update.message.reply_text(
                 f"💳 Transfer *Rp{nominal + 23:,}* ke:\n"
-                "`DANA 0812-XXXX-XXXX a.n. Store Ekha`\nSetelah transfer, kirim bukti foto transfer ke bot ini.",
+                "`DANA 0831-7721-1438 a.n. Rak** Ha****`\nSetelah transfer, kirim bukti foto transfer ke bot ini.",
                 parse_mode="Markdown",
                 reply_markup=reply_keyboard
             )
