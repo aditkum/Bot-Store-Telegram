@@ -10,7 +10,7 @@ from telegram.ext import (
 )
 from datetime import datetime
 
-OWNER_ID = 1160642744
+OWNER_ID = 1942140593
 produk_file = "produk.json"
 saldo_file = "saldo.json"
 deposit_file = "pending_deposit.json"
@@ -689,7 +689,7 @@ async def handle_photo(update: Update, context: CallbackContext):
     await update.message.reply_text("✅ Bukti dikirim! Tunggu konfirmasi admin.")
 
 def main(): # Made With love by @govtrashit A.K.A RzkyO
-    app = Application.builder().token("CHANGE_THIS_TO_YOUR_TOKEN").build()
+    app = Application.builder().token("7889240400:AAFu2IR845sH3oV_xa1WJtY2hGmh0ivfXgo").build()
     app.add_handler(CommandHandler("start", start))
     app.add_handler(CallbackQueryHandler(button_callback))
     app.add_handler(MessageHandler(filters.TEXT & ~filters.COMMAND, handle_text))
