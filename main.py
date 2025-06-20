@@ -243,8 +243,8 @@ async def handle_deposit_nominal(update, context): # HANDLE DEPOSIT NOMINAL
         await context.bot.send_message(
             chat_id=query.from_user.id,
             text=f"💳 Transfer *Rp{nominal + 23:,}* ke:\n"
-                 "`DANA 0812-1259-4112 A.N And**`\n"
-                 "`SEABANK 901655655990 A.N Rizky Oryza`\n"
+                 "`DANA 0831-7721-1438 A.N Rak** Ha**`\n"
+                 "`BCA 8130511458 A.N Rak** Ha**`\n"
                  "`BANK JAGO 107616413403 A.N Rizky Oryza`\nSetelah transfer, kirim bukti ke bot ini.",
             parse_mode="Markdown",
             reply_markup=reply_keyboard
