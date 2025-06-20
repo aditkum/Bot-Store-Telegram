@@ -22,15 +22,15 @@
     ]
   },
   "2": {
-    "nama": "CANVA PRO 12 BULAN",
-    "stok": 0,
-    "harga": 55000,
+    "nama": "VVIP INDO PREMIUM",
+    "stok": 99999,
+    "harga": 40000,
     "akun_list": []
   },
   "3": {
-    "nama": "CANVA PRO LIFETIME",
-    "stok": 2,
-    "harga": 100000,
+    "nama": "VVIP ALL TALENT",
+    "stok": 9999,
+    "harga": 35000,
     "akun_list": [
       {
         "username": "canvalife1@mail.com",
@@ -45,9 +45,9 @@
     ]
   },
   "4": {
-    "nama": "EXPRESS VPN 30 HARI",
-    "stok": 1,
-    "harga": 30000,
+    "nama": "VVIP CAMPURAN 12K MEDIA",
+    "stok": 9999,
+    "harga": 35000,
     "akun_list": [
       {
         "username": "vpnuser1@mail.com",
