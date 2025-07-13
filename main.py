@@ -2,7 +2,7 @@ import os
 import logging
 from datetime import datetime
 from bot.modules.payment_handler import payment_gateway
-from modules.utils import utils
+from .modules.utils import utils
 from pymongo import MongoClient
 from telegram import (
     Update,
