@@ -1,6 +1,11 @@
 import os
 import sys
 from pathlib import Path
+import sys
+from pathlib import Path
+
+# Tambahkan path utama ke sys PATH
+sys.path.insert(0, str(Path(__file__).parent.absolute()))
 
 # ===============================================
 # FIX 1: Tambahkan root project ke Python path
