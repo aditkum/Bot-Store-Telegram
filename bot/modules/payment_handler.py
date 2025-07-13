@@ -20,25 +20,16 @@ class PaymentHandler:
 
 class PaymentGateway:
     def __init__(self):
-        self.api_key = os.getenv("VIOLET_API_KEY")
-        self.secret_key = os.getenv("VIOLET_SECRET_KEY")
+        self.api_key = "your_api_key_here"
     
-    def create_transaction(self, amount):
-        headers = {
-            "Authorization": f"Bearer {self.api_key}",
-            "Content-Type": "application/json"
+    def create_payment(self, user_id, amount):
+        # Implementasi nyata akan memanggil API payment
+        return {
+            "status": "success",
+            "payment_url": f"https://payment.example.com?user={user_id}&amount={amount}",
+            "amount": amount
         }
-        payload = {
-            "amount": amount,
-            "currency": "IDR"
-        }
-        
-        response = requests.post(
-            "https://api.violetmediapay.com/transactions",
-            headers=headers,
-            json=payload
-        )
-        return response.json()
 
-# Inisialisasi instance
+# Buat instance untuk diimpor
 payment_gateway = PaymentGateway()
+
