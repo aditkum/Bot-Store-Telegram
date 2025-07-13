@@ -7,7 +7,6 @@ from bot.modules.payment_handler import payment_gateway
 from bot.modules.utils import utils
 from pymongo import MongoClient, ASCENDING
 from bot.handlers.user import start, handle_vip
-
    application.add_handler(CommandHandler("start", start))
    application.add_handler(CommandHandler("vip", handle_vip))
    
