@@ -4,6 +4,14 @@ from database.models import Database
 from bot.modules.utils import format_currency
 import os
 
+   class Admin:
+       def __init__(self):
+           pass
+
+       def perform_admin_task(self):
+           # Logika tugas admin
+           print("Admin task performed")
+   
 db = Database()
 
 async def menu(update: Update, context: CallbackContext):
