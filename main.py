@@ -28,6 +28,15 @@ from telegram.ext import (
 db.payments.create_index([("user_id", ASCENDING)])
 db.payments.create_index([("status", ASCENDING)])
 db.users.create_index([("user_id", ASCENDING)], unique=True)
+from dotenv import load_dotenv
+import os
+
+# Memuat variabel lingkungan dari file .env
+load_dotenv()
+
+# Mengakses variabel lingkungan
+api_key = os.getenv("VIOLET_API_KEY")
+secret_key = os.getenv("VIOLET_SECRET_KEY")
 
 # --- Configuration ---
 OWNER_ID = 1749723307
