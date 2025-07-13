@@ -9,7 +9,7 @@ class PaymentHandler:
         self.base_url = (
             "https://violetmediapay.com/api/live/"
             if os.getenv("PAYMENT_ENV") == "live" 
-            else "https://violetmediapay.com/api/sandbox/"
+            else "https://violetmediapay.com/api/sandbox/transactions"
         )
         self.headers = {
             "Authorization": f"Bearer {os.getenv('PAYMENT_API_KEY')}",
