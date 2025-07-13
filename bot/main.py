@@ -6,7 +6,7 @@ from bot.handlers import (
     user,  # Mengimport modul user handlers
     admin  # Mengimport modul admin handlers
 )
-from modules.payment_handler import payment_gateway
+from modules import PaymentHandler
 from database.models import init_db
 
 # Setup logging
