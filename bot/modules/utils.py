@@ -1,11 +1,16 @@
-   # /root/Bot-Store-Telegram/bot/modules/utils.py
-   def format_currency(amount):
-       """Format angka ke dalam format mata uang IDR"""
-       return f"Rp{amount:,.0f}".replace(",", ".")
+   # File utils.py yang benar
+def format_currency(amount):
+       """Format angka ke format mata uang Indonesia"""
+   return f"Rp{amount:,.0f}".replace(",", ".")
 
-   # Ekspor objek utama
+def validate_phone(number):
+       """Validasi nomor telepon Indonesia"""
+   import re
+   return re.match(r"^\+62\d{9,12}$", number) is not None
+
+   # Ekspor fungsi-fungsi
    utils = {
        'format_currency': format_currency,
-       # fungsi tambahan bisa ditambahkan di sini
+       'validate_phone': validate_phone
    }
    
