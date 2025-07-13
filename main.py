@@ -20,6 +20,33 @@ from telegram.ext import (
     CallbackContext
 )
 from dotenv import load_dotenv
+async def add_product(update: Update, context: CallbackContext):
+    if update.effective_user.id != OWNER_ID:  # Hanya admin yang bisa
+        await update.message.reply_text("⛔ Command hanya untuk admin!")
+        return
+    
+    try:
+        args = context.args
+        if len(args) < 3:
+            await update.message.reply_text("Format: /addproduct <nama> <harga> <stok> <deskripsi>")
+            return
+        
+        product = {
+            "nama": args[0],
+            "harga": int(args[1]),
+            "stok": int(args[2]),
+            "deskripsi": " ".join(args[3:]) if len(args) > 3 else "Tidak ada deskripsi",
+            "created_at": datetime.now()
+        }
+        
+        produk_col.insert_one(product)
+        await update.message.reply_text(f"✅ Produk {args[0]} berhasil ditambahkan!")
+    
+    except Exception as e:
+        await update.message.reply_text(f"❌ Error: {str(e)}")
+
+# Tambahkan handler di main()
+application.add_handler(CommandHandler("addproduct", add_product))
 
 # Memuat variabel lingkungan dari file .env
 load_dotenv()
