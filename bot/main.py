@@ -3,6 +3,12 @@ import logging
 from telegram.ext import Application
 from bot.handlers import user, admin
 from database.models import init_db
+from bot.handlers.admin import menu, handle_admin_callback
+   
+   # Register handler
+   app.add_handler(CommandHandler("admin", menu))
+   app.add_handler(CallbackQueryHandler(handle_admin_callback, pattern="^admin_"))
+   
 
 # Setup logging
 logging.basicConfig(
