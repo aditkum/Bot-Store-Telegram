@@ -3,6 +3,8 @@ import sys
 from pathlib import Path
 import sys
 from pathlib import Path
+from bot.modules.payment_handler import payment_gateway
+
 
 # Tambahkan path utama ke sys PATH
 sys.path.insert(0, str(Path(__file__).parent.absolute()))
@@ -16,7 +18,7 @@ sys.path.append(str(root_dir))
 # ===============================================
 # FIX 2: Import setelah set path
 # ===============================================
-from .modules.payment_handler import payment_gateway # Load environment variables
+
 from dotenv import load_dotenv
 load_dotenv()
 
