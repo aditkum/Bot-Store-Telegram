@@ -31,7 +31,7 @@ api_key = os.getenv("VIOLET_API_KEY")
 secret_key = os.getenv("VIOLET_SECRET_KEY")
 
 # --- Configuration ---
-OWNER_ID = 1749723307
+OWNER_ID = 1760828200
 MONGO_URI = os.getenv("MONGO_URI", "mongodb://localhost:27017/")
 
 # Initialize MongoDB
