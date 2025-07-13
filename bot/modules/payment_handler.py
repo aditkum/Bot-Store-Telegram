@@ -5,6 +5,15 @@ import requests
 from datetime import datetime
 
 class PaymentHandler:
+    def __init__(self, api_key: str, secret_key: str):
+        self.api_key = api_key
+        self.secret_key = secret_key
+    
+    def create_payment(self):
+        # Implementasi method
+        pass
+
+class PaymentHandler:
     def __init__(self):
         self.base_url = (
             "https://violetmediapay.com/api/live/"
