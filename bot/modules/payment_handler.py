@@ -4,6 +4,9 @@ import hashlib
 import requests
 from datetime import datetime
 
+   # payment_handler.py harus berisi:
+   payment_gateway = PaymentGateway()  # atau class/fungsi bernama payment_gateway
+   
 class PaymentHandler:
     def __init__(self, api_key: str, secret_key: str):
         self.api_key = api_key
