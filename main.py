@@ -46,7 +46,7 @@ async def add_product(update: Update, context: CallbackContext):
         await update.message.reply_text(f"❌ Error: {str(e)}")
 
 # Tambahkan handler di main()
-application.add_handler(CommandHandler("addproduct", add_product))
+Application.add_handler(CommandHandler("addproduct", add_product))
 
 # Memuat variabel lingkungan dari file .env
 load_dotenv()
