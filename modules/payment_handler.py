@@ -30,7 +30,7 @@ class PaymentHandler:
     def __init__(self):
         self.api_key = os.getenv("PAYMENT_API_KEY")
         self.secret_key = os.getenv("PAYMENT_SECRET_KEY")
-        self.base_url = "https://violetmediapay.com/api/live"  # Ganti dengan live saat produksi
+        self.base_url = "https://violetmediapay.com/api/live/transactions"  # Ganti dengan live saat produksi
 
     def create_signature(self, ref_kode: str, amount: str) -> str:
         """Membuat signature untuk permintaan transaksi"""
