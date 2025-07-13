@@ -24,6 +24,10 @@ from telegram.ext import (
     filters,
     CallbackContext
 )
+# Di main.py atau initialization script
+db.payments.create_index([("user_id", ASCENDING)])
+db.payments.create_index([("status", ASCENDING)])
+db.users.create_index([("user_id", ASCENDING)], unique=True)
 
 # --- Configuration ---
 OWNER_ID = 1749723307
