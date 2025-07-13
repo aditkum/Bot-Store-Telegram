@@ -220,8 +220,8 @@ def main():
     application = Application.builder().token(os.getenv("TELEGRAM_TOKEN")).build()
     
     # Command Handlers
-    application.add_handler(CommandHandler("start", send_main_menu))
-    application.add_handler(CommandHandler("addinline", handle_add_inline))
+    application.add_handler(CommandHandler("start", user['start']))
+    application.add_handler(CommandHandler("vip", user['handle_vip']))
     
     # Callback Handlers
     application.add_handler(CallbackQueryHandler(handle_list_produk, pattern="^list_produk$"))
