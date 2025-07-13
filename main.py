@@ -20,7 +20,7 @@ from telegram.ext import (
 from dotenv import load_dotenv
 from bot.handlers.admin import Admin
 from bot.handlers.user import user
-from bot.modules.payment_handler import payment_gateaway
+from bot.modules.payment_handler import payment_gateway
 from bot.modules.utils import utils
 
 # Memuat variabel lingkungan dari file .env
