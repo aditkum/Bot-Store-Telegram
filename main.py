@@ -3,33 +3,23 @@ import logging
 from datetime import datetime
 from bot.modules.payment_handler import payment_gateway
 from bot.modules.utils import utils
-from pymongo import MongoClient
+from pymongo import MongoClient, ASCENDING
 from telegram import (
     Update,
     InlineKeyboardButton,
     InlineKeyboardMarkup,
-    InputFile,
-    ReplyKeyboardMarkup,
-    KeyboardButton,
-    ReplyKeyboardRemove,
-    InlineQueryResultArticle,
     InputTextMessageContent
 )
 from telegram.ext import (
     Application,
     CommandHandler,
-    MessageHandler,
     CallbackQueryHandler,
     InlineQueryHandler,
+    MessageHandler,
     filters,
     CallbackContext
 )
-# Di main.py atau initialization script
-db.payments.create_index([("user_id", ASCENDING)])
-db.payments.create_index([("status", ASCENDING)])
-db.users.create_index([("user_id", ASCENDING)], unique=True)
 from dotenv import load_dotenv
-import os
 
 # Memuat variabel lingkungan dari file .env
 load_dotenv()
@@ -49,6 +39,11 @@ produk_col = db['produk']
 riwayat_col = db['riwayat']
 statistik_col = db['statistik']
 inline_messages_col = db['inline_messages']
+
+# Pastikan index sudah dibuat
+db.payments.create_index([("user_id", ASCENDING)])
+db.payments.create_index([("status", ASCENDING)])
+db.users.create_index([("user_id", ASCENDING)], unique=True)
 
 # --- Logging ---
 logging.basicConfig(
@@ -109,9 +104,9 @@ async def handle_inline_query(update: Update, context: CallbackContext):
                 description=f"Rp{product['harga']:,} | Stok: {product['stok']}",
                 input_message_content=InputTextMessageContent(
                     message_text=f"🛒 *{product['nama']}*\n"
-                                f"💰 Harga: Rp{product['harga']:,}\n"
-                                f"📦 Stok: {product['stok']}\n\n"
-                                f"{product.get('deskripsi', '')}",
+                                 f"💰 Harga: Rp{product['harga']:,}\n"
+                                 f"📦 Stok: {product['stok']}\n\n"
+                                 f"{product.get('deskripsi', '')}",
                     parse_mode="Markdown"
                 ),
                 reply_markup=InlineKeyboardMarkup([
