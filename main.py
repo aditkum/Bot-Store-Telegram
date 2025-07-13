@@ -3,6 +3,8 @@ import logging
 from datetime import datetime
 from bot.modules.payment_handler import payment_gateway
 from bot.modules.utils import utils
+from bot.handlers.admin import admin
+from bot.handlers.user import user
 from pymongo import MongoClient, ASCENDING
 from telegram import (
     Update,
@@ -19,52 +21,6 @@ from telegram.ext import (
     filters,
     CallbackContext
 )
-# Di bagian handlers/commands.py atau langsung di main.py
-async def add_product(update: Update, context: CallbackContext):
-    if update.effective_user.id != OWNER_ID:
-        await update.message.reply_text("⛔ Perintah ini hanya untuk admin!")
-        return
-    
-    try:
-        args = context.args
-        if len(args) < 3:
-            await update.message.reply_text(
-                "Format salah. Gunakan:\n"
-                "/addproduct <nama> <harga> <stok> <deskripsi(opsional)>"
-            )
-            return
-        
-        product = {
-            "nama": args[0],
-            "harga": int(args[1]),
-            "stok": int(args[2]),
-            "deskripsi": " ".join(args[3:]) if len(args) > 3 else "-",
-            "created_at": datetime.now()
-        }
-        
-        # Masukkan ke database
-        result = db.produk.insert_one(product)
-        
-        await update.message.reply_text(
-            f"✅ Produk berhasil ditambahkan:\n"
-            f"Nama: {product['nama']}\n"
-            f"Harga: Rp{product['harga']:,}\n"
-            f"Stok: {product['stok']}"
-        )
-        
-    except ValueError:
-        await update.message.reply_text("❌ Format angka tidak valid (harga dan stok harus angka)")
-    except Exception as e:
-        await update.message.reply_text(f"❌ Error: {str(e)}")
-
-# Di main(), tambahkan handler:
-def main():
-    # ... (kode sebelumnya)
-    
-    # Tambahkan handler command
-    application.add_handler(CommandHandler("addproduct", add_product))
-    
-    application.run_polling()
 
 from dotenv import load_dotenv
 # Memuat variabel lingkungan dari file .env
