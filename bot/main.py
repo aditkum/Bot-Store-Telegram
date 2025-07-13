@@ -1,11 +1,12 @@
 import os
+import sys
 import logging
 from telegram.ext import Application, CommandHandler, CallbackQueryHandler
 from bot.handlers import (
     user,  # Mengimport modul user handlers
     admin  # Mengimport modul admin handlers
 )
-from bot.modules.payment import PaymentHandler
+from modules.payment_handler import payment_gateway
 from database.models import init_db
 
 # Setup logging
